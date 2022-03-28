@@ -20,4 +20,5 @@ There is one exploratory notebook available here to showcase my work related to 
 The file explorer is accessible using the button in left corner of the navigation bar. You can create a new file by clicking the **New file** button in the file explorer. You can also create folders by clicking the **New folder** button.
 
 ## Medium Blog Post
-The main findings of the code can be found at the Medium Blog post available here
+The main findings of the code can be found at the Medium Blog post available here 
+https://medium.com/@ali.y.alkhowaiter/how-data-will-make-you-view-movies-revenue-differently-67c427b0f1a
