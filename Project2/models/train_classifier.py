@@ -49,23 +49,20 @@ def tokenize(text):
     """
     Text Tokenization Function.
     """
-    # text normalization
-    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
-    stop_words = stopwords.words("english")
-
     # tokenize text
-    words = word_tokenize(text)
+    wrods = word_tokenize(text)
     
     # initiate lemmatizer
     lemmatizer = WordNetLemmatizer()
     
-    #stemming
-    stemmed = [PorterStemmer().stem(w) for w in words]
-
-    #lemmatizing
-    lemmed_words = [WordNetLemmatizer().lemmatize(w) for w in stemmed if w not in stop_words]
+    #iterate through each token
+    clean_tokens=[]
+    for tok in wrods:
+        # lemmatize, normalise case, and remove leading/trailing white space
+        clean_tok = lemmatizer.lemmatize(tok).lower().strip()
+        clean_tokens.append(clean_tok)
         
-    return lemmed_words
+    return clean_tokens
 
 """
 3. Build a machine learning pipeline¶
@@ -109,6 +106,9 @@ def save_model(model, model_filepath):
     pickle.dump(model, open(model_filepath, 'wb'))
 
 
+"""
+7. Test your model
+"""
 def main():
     """
     Build, train, evaluat and save the model
