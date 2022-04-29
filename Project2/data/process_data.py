@@ -55,6 +55,9 @@ def clean_data(df):
     # rename the columns of 'categories'
     categories.columns = category_colnames
     
+    """
+    4. Convert category values to just numbers 0 or 1.
+    """
     # Iterate through the category columns in df to keep only 
     # the last character of each string (the 1 or 0) 
     for column in categories:
@@ -63,19 +66,27 @@ def clean_data(df):
 
         # convert column from string to numeric
         categories[column] = categories[column].astype(int)
-        
+    
+    """
+    5. Replace categories column in df with new category columns.
+    """
     # drop the original categories column from `df`
     df.drop('categories', axis=1, inplace=True)
 
     # concatenate the original dataframe with the new `categories` dataframe
     df = pd.concat([df, categories], axis=1)
 
+    """
+    6. Remove duplicates.
+    """
     # drop duplicates
     df.drop_duplicates(inplace=True)
 
     return 
 
-
+"""
+7. Save the clean dataset into an sqlite database.
+"""
 def save_data(df, database_filename):
     """
     string dataframe in SQLite.
