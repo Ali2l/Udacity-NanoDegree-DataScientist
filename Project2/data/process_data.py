@@ -1,22 +1,93 @@
-import sys
+"""
+1. Import libraries and load datasets.
+"""
 
+# Import Python libraries
+import sys
+import pandas as pd
+import numpy as np
+import sqlite3
+import sqlalchemy
+from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
-    pass
+    """
+    Load and merge datasets from 2 given filepaths.
+
+    Returns:
+    df: dataframe containing messages_filepath and categories_filepath merged
+    """
+    # Load messages.csv into a dataframe.
+    # Load categories.csv into a dataframe.
+    messages = pd.read_csv(messages_filepath)
+    categories = pd.read_csv(categories_filepath)
+
+    """
+    2. Merge datasets.
+    """
+    # Merge the messages and categories datasets using the common id
+    df = messages.merge(categories, how ='outer', on =['id'])
+    return 
 
 
+"""
+3. Split categories into separate category columns.
+"""
 def clean_data(df):
-    pass
+    """
+    Dataframe cleaning.
+  
+    Returns:
+    df: Cleaned DF.
+    
+    """
+    # create a dataframe of the 36 individual category columns
+    categories = df['categories'].str.split(';', expand=True)
+
+    # Useing the first row of categories dataframe to create column names for the categories data.
+    row = categories.head(1)
+
+    # appling a lambda function that takes
+    # up to the second to last character of each string with slicing
+    # to create new column names
+    category_colnames = row.applymap(lambda x: x[:-2]).iloc[0,:]
+
+    # rename the columns of 'categories'
+    categories.columns = category_colnames
+    
+    # Iterate through the category columns in df to keep only 
+    # the last character of each string (the 1 or 0) 
+    for column in categories:
+        # set each value to be the last character of the string
+        categories[column] = categories[column].astype(str).str[-1]
+
+        # convert column from string to numeric
+        categories[column] = categories[column].astype(int)
+        
+    # drop the original categories column from `df`
+    df.drop('categories', axis=1, inplace=True)
+
+    # concatenate the original dataframe with the new `categories` dataframe
+    df = pd.concat([df, categories], axis=1)
+
+    # drop duplicates
+    df.drop_duplicates(inplace=True)
+
+    return 
 
 
 def save_data(df, database_filename):
-    pass  
+    """
+    string dataframe in SQLite.
+    """
+    engine = create_engine(f'sqlite:///{database_filename}')
+    df.to_sql('disaster_messages', engine, index=False, if_exists='replace')    
 
 
 def main():
     if len(sys.argv) == 4:
 
-        messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
+        messages_filepath, categories_filepath, database_filename = sys.argv[1:]
 
         print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
               .format(messages_filepath, categories_filepath))
@@ -25,8 +96,8 @@ def main():
         print('Cleaning data...')
         df = clean_data(df)
         
-        print('Saving data...\n    DATABASE: {}'.format(database_filepath))
-        save_data(df, database_filepath)
+        print('Saving data...\n    DATABASE: {}'.format(database_filename))
+        save_data(df, database_filename)
         
         print('Cleaned data saved to database!')
     
