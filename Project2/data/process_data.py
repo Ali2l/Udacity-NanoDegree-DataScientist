@@ -13,9 +13,6 @@ from sqlalchemy import create_engine
 def load_data(messages_filepath, categories_filepath):
     """
     Load and merge datasets from 2 given filepaths.
-
-    Returns:
-    df: dataframe containing messages_filepath and categories_filepath merged
     """
     # Load messages.csv into a dataframe.
     # Load categories.csv into a dataframe.
@@ -36,10 +33,6 @@ def load_data(messages_filepath, categories_filepath):
 def clean_data(df):
     """
     Dataframe cleaning.
-  
-    Returns:
-    df: Cleaned DF.
-    
     """
     # create a dataframe of the 36 individual category columns
     categories = df['categories'].str.split(';', expand=True)
@@ -87,18 +80,18 @@ def clean_data(df):
 """
 7. Save the clean dataset into an sqlite database.
 """
-def save_data(df, database_filename):
+def save_data(df, database_filepath):
     """
     string dataframe in SQLite.
     """
-    engine = create_engine(f'sqlite:///{database_filename}')
+    engine = create_engine(f'sqlite:///{database_filepath}')
     df.to_sql('disaster_messages', engine, index=False, if_exists='replace')    
 
 
 def main():
     if len(sys.argv) == 4:
 
-        messages_filepath, categories_filepath, database_filename = sys.argv[1:]
+        messages_filepath, categories_filepath, database_filepath = sys.argv[1:]
 
         print('Loading data...\n    MESSAGES: {}\n    CATEGORIES: {}'
               .format(messages_filepath, categories_filepath))
@@ -107,8 +100,8 @@ def main():
         print('Cleaning data...')
         df = clean_data(df)
         
-        print('Saving data...\n    DATABASE: {}'.format(database_filename))
-        save_data(df, database_filename)
+        print('Saving data...\n    DATABASE: {}'.format(database_filepath))
+        save_data(df, database_filepath)
         
         print('Cleaned data saved to database!')
     
