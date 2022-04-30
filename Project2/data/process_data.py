@@ -24,7 +24,7 @@ def load_data(messages_filepath, categories_filepath):
     """
     # Merge the messages and categories datasets using the common id
     df = messages.merge(categories, how ='outer', on =['id'])
-    return 
+    return df
 
 
 """
@@ -75,7 +75,7 @@ def clean_data(df):
     # drop duplicates
     df.drop_duplicates(inplace=True)
 
-    return 
+    return df
 
 """
 7. Save the clean dataset into an sqlite database.
@@ -85,7 +85,7 @@ def save_data(df, database_filepath):
     string dataframe in SQLite.
     """
     engine = create_engine(f'sqlite:///{database_filepath}')
-    df.to_sql('disaster_messages', engine, index=False, if_exists='replace')    
+    df.to_sql('disaster_messages_table', engine, index=False, if_exists='replace')    
 
 
 def main():

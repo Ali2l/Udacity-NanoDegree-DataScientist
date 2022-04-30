@@ -36,7 +36,7 @@ def load_data(database_filepath):
 
     # load data from database 
     engine = create_engine(f'sqlite:///{database_filepath}')
-    df = pd.read_sql_table("disaster_messages", con=engine)
+    df = pd.read_sql_table("disaster_messages_table", con=engine)
     X = df['message']
     Y = df.iloc[:, 4:]
     return X,Y
@@ -90,7 +90,7 @@ def build_model():
 """
 5. Test your model
 """
-def evaluate_model(model, X_test, Y_test, category_names):
+def evaluate_model(model, X_test, Y_test):
     """
     Evaluates the model 
     """
@@ -116,7 +116,7 @@ def main():
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
-        X, Y, category_names = load_data(database_filepath)
+        X, Y = load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
@@ -126,7 +126,7 @@ def main():
         model.fit(X_train, Y_train)
         
         print('Evaluating model...')
-        evaluate_model(model, X_test, Y_test, category_names)
+        evaluate_model(model, X_test, Y_test)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)
